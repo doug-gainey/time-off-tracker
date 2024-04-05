@@ -1,0 +1,12 @@
+[v-cloak] {
+    display: none;
+}
+
+dd {
+    margin-bottom: 1rem;
+}
+
+.form-control::placeholder {
+    color: inherit;
+    opacity: .35;
+}
