@@ -42,15 +42,15 @@
                                        placeholder="0.00">
                             </div>
                             <div class="form-group mb-3">
-                                <label class="form-label" for="vacation-input">Current Vacation (hours)</label>
-                                <input class="form-control" id="vacation-input" v-model="vacationHours"
-                                       v-on:change="setValue('vacationHours', $event.target.value)" type="number"
-                                       placeholder="0.00">
-                            </div>
-                            <div class="form-group mb-3">
                                 <label class="form-label" for="pto-input">Current PTO (hours)</label>
                                 <input class="form-control" id="pto-input" v-model="ptoHours"
                                        v-on:change="setValue('ptoHours', $event.target.value)" type="number"
+                                       placeholder="0.00">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label class="form-label" for="vacation-input">Current Vacation (hours)</label>
+                                <input class="form-control" id="vacation-input" v-model="vacationHours"
+                                       v-on:change="setValue('vacationHours', $event.target.value)" type="number"
                                        placeholder="0.00">
                             </div>
                             <div class="form-group mb-3">
@@ -77,28 +77,28 @@
                             </div>
                         </form>
                         <div class="py-2">
-                            <div v-if="showVacationWarning"
-                                 class="alert alert-warning d-flex gap-3 align-items-center my-1">
-                                <span class="bi-exclamation-triangle-fill text-warning"></span>
-                                Your vacation time will max out within {{ warningThreshold }} days.<br>
-                                Be sure to take vacation before you max out!
-                            </div>
                             <div v-if="showPtoWarning" class="alert alert-warning d-flex gap-3 align-items-center my-1">
                                 <span class="bi-exclamation-triangle-fill text-warning"></span>
                                 Your PTO will max out within the {{ warningThreshold }} days.<br>
                                 Be sure to take PTO before you max out!
-                            </div>
-                            <div v-if="vacationAccrualAtTargetDate >= maxVacationAccrual"
-                                 class="alert alert-warning d-flex gap-3 align-items-center my-1">
-                                <span class="bi-exclamation-triangle-fill text-warning"></span>
-                                Your vacation time will max out before your target date.<br>
-                                Be sure to take vacation before you max out!
                             </div>
                             <div v-if="ptoAccrualAtTargetDate >= maxPtoAccrual"
                                  class="alert alert-warning d-flex gap-3 align-items-center my-1">
                                 <span class="bi-exclamation-triangle-fill text-warning"></span>
                                 Your PTO will max out before your target date.<br>
                                 Be sure to take PTO before you max out!
+                            </div>
+                            <div v-if="showVacationWarning"
+                                 class="alert alert-warning d-flex gap-3 align-items-center my-1">
+                                <span class="bi-exclamation-triangle-fill text-warning"></span>
+                                Your vacation time will max out within {{ warningThreshold }} days.<br>
+                                Be sure to take vacation before you max out!
+                            </div>
+                            <div v-if="vacationAccrualAtTargetDate >= maxVacationAccrual"
+                                 class="alert alert-warning d-flex gap-3 align-items-center my-1">
+                                <span class="bi-exclamation-triangle-fill text-warning"></span>
+                                Your vacation time will max out before your target date.<br>
+                                Be sure to take vacation before you max out!
                             </div>
                         </div>
                     </div>
@@ -108,6 +108,15 @@
                         <dl>
                             <dt>Years of Service</dt>
                             <dd>{{ yearsOfService }}</dd>
+
+                            <dt>PTO Accrual Rate (per pay period)</dt>
+                            <dd>{{ ptoAccrualRate }} hours</dd>
+
+                            <dt>Yearly PTO Accrual</dt>
+                            <dd>{{ yearlyPtoAccrual }} hours ({{ yearlyPtoAccrual / 40 }} weeks)</dd>
+
+                            <dt>Maximum PTO Accrual</dt>
+                            <dd>{{ maxPtoAccrual }} hours ({{ maxPtoAccrual / 40 }} weeks)</dd>
 
                             <dt>Vacation Accrual Rate (per pay period)</dt>
                             <dd>{{ vacationAccrualRate || '{shrug}' }} hours</dd>
@@ -120,33 +129,17 @@
                             <dt>Maximum Vacation Accrual</dt>
                             <dd>{{ maxVacationAccrual }} hours ({{ maxVacationAccrual / 40 }} weeks)</dd>
 
-                            <dt>PTO Accrual Rate (per pay period)</dt>
-                            <dd>{{ ptoAccrualRate }} hours</dd>
-
-                            <dt>Yearly PTO Accrual</dt>
-                            <dd>{{ yearlyPtoAccrual }} hours ({{ yearlyPtoAccrual / 40 }} weeks)</dd>
-
-                            <dt>Maximum PTO Accrual</dt>
-                            <dd>{{ maxPtoAccrual }} hours ({{ maxPtoAccrual / 40 }} weeks)</dd>
-
                             <dt>Total Time Off</dt>
                             <dd>{{ totalHours }} hours ({{ totalHours / 40 }} weeks)</dd>
-
-                            <dt v-bind:class="{ 'text-danger': showVacationWarning }">Take Vacation Before</dt>
-                            <dd v-bind:class="{ 'text-danger': showVacationWarning }">
-                                {{ takeVacationBefore || 'N/A' }}
-                            </dd>
 
                             <dt v-bind:class="{ 'text-danger': showPtoWarning }">Take PTO Before</dt>
                             <dd v-bind:class="{ 'text-danger': showPtoWarning }">
                                 {{ takePtoBefore || 'N/A' }}
                             </dd>
 
-                            <dt v-bind:class="{ 'text-danger': vacationAccrualAtTargetDate >= maxVacationAccrual }">
-                                Vacation Accrual at Target Date
-                            </dt>
-                            <dd v-bind:class="{ 'text-danger': vacationAccrualAtTargetDate >= maxVacationAccrual }">
-                                {{ vacationAccrualAtTargetDate }} hours ({{ vacationAccrualAtTargetDate / 40 }} weeks)
+                            <dt v-bind:class="{ 'text-danger': showVacationWarning }">Take Vacation Before</dt>
+                            <dd v-bind:class="{ 'text-danger': showVacationWarning }">
+                                {{ takeVacationBefore || 'N/A' }}
                             </dd>
 
                             <dt v-bind:class="{ 'text-danger': ptoAccrualAtTargetDate >= maxPtoAccrual }">PTO Accrual at
@@ -154,6 +147,13 @@
                             </dt>
                             <dd v-bind:class="{ 'text-danger': ptoAccrualAtTargetDate >= maxPtoAccrual }">
                                 {{ ptoAccrualAtTargetDate }} hours ({{ ptoAccrualAtTargetDate / 40 }} weeks)
+                            </dd>
+
+                            <dt v-bind:class="{ 'text-danger': vacationAccrualAtTargetDate >= maxVacationAccrual }">
+                                Vacation Accrual at Target Date
+                            </dt>
+                            <dd v-bind:class="{ 'text-danger': vacationAccrualAtTargetDate >= maxVacationAccrual }">
+                                {{ vacationAccrualAtTargetDate }} hours ({{ vacationAccrualAtTargetDate / 40 }} weeks)
                             </dd>
 
                             <dt>Total Time Off at Target Date</dt>
